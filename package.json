@@ -8,7 +8,7 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "build-extension": "vite build && copy manifest.json dist\\ && xcopy icons dist\\icons\\ /E /I && copy background.js dist\\ && copy content.js dist\\ && copy content.css dist\\ && copy imdb-ratings.js dist\\ && copy README.md dist\\"
+    "build-extension": "vite build && copy manifest.json dist\\ && xcopy icons dist\\icons\\ /E /I && copy background.js dist\\ && copy content.js dist\\ && copy content.css dist\\ && copy README.md dist\\"
   },
   "dependencies": {
     "lucide-react": "^0.344.0",
