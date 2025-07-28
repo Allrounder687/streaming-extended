@@ -1803,7 +1803,7 @@
       const styleId = 'streaming-extended-ratings-styles';
       if (document.getElementById(styleId)) return;
 
-      const styles = \`
+      const styles = `
         .se-ratings-container {
           position: fixed;
           top: 20px;
@@ -1924,7 +1924,7 @@
           margin-top: 4px;
           opacity: 0.8;
         }
-      \`;
+      `;
 
       const styleSheet = document.createElement('style');
       styleSheet.id = styleId;
@@ -2147,11 +2147,11 @@
     }
 
     async fetchFromOMDB(title) {
-      const url = \`\${this.baseUrl}?apikey=\${this.apiKey}&t=\${encodeURIComponent(title)}&plot=short\`;
+      const url = `${this.baseUrl}?apikey=${this.apiKey}&t=${encodeURIComponent(title)}&plot=short`;
       
       const response = await fetch(url);
       if (!response.ok) {
-        throw new Error(\`HTTP error! status: \${response.status}\`);
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
       
       return await response.json();
@@ -2168,11 +2168,11 @@
     showLoading(title) {
       if (!this.ratingsContainer) return;
 
-      this.ratingsContainer.innerHTML = \`
+      this.ratingsContainer.innerHTML = `
         <button class="se-rating-close" onclick="this.parentElement.style.display='none'">×</button>
-        <div class="se-rating-title">\${this.truncateTitle(title)}</div>
+        <div class="se-rating-title">${this.truncateTitle(title)}</div>
         <div class="se-rating-loading">Loading ratings...</div>
-      \`;
+      `;
       
       this.ratingsContainer.style.display = 'block';
     }
@@ -2182,26 +2182,26 @@
 
       const ratings = this.parseRatings(data);
       
-      let ratingsHTML = \`
+      let ratingsHTML = `
         <button class="se-rating-close" onclick="this.parentElement.style.display='none'">×</button>
         <div class="se-rating-title">
-          \${this.truncateTitle(title)}
-          \${data.Year ? \`<span class="se-rating-year">(\${data.Year})</span>\` : ''}
+          ${this.truncateTitle(title)}
+          ${data.Year ? `<span class="se-rating-year">(${data.Year})</span>` : ''}
         </div>
-      \`;
+      `;
 
       if (ratings.length > 0) {
         ratings.forEach(rating => {
-          ratingsHTML += \`
+          ratingsHTML += `
             <div class="se-rating-item">
-              <span class="se-rating-source">\${rating.source}</span>
-              <span class="se-rating-value se-rating-\${rating.class}">\${rating.value}</span>
+              <span class="se-rating-source">${rating.source}</span>
+              <span class="se-rating-value se-rating-${rating.class}">${rating.value}</span>
             </div>
-          \`;
+          `;
         });
         
         if (data.Genre) {
-          ratingsHTML += \`<div class="se-rating-genre">\${data.Genre}</div>\`;
+          ratingsHTML += `<div class="se-rating-genre">${data.Genre}</div>`;
         }
       } else {
         ratingsHTML += '<div class="se-rating-error">No ratings available</div>';
@@ -2224,7 +2224,7 @@
       if (data.imdbRating && data.imdbRating !== 'N/A') {
         ratings.push({
           source: 'IMDB',
-          value: \`\${data.imdbRating}/10\`,
+          value: `${data.imdbRating}/10`,
           class: 'imdb'
         });
       }
@@ -2257,10 +2257,10 @@
     showError(message) {
       if (!this.ratingsContainer) return;
 
-      this.ratingsContainer.innerHTML = \`
+      this.ratingsContainer.innerHTML = `
         <button class="se-rating-close" onclick="this.parentElement.style.display='none'">×</button>
-        <div class="se-rating-error">\${message}</div>
-      \`;
+        <div class="se-rating-error">${message}</div>
+      `;
       
       this.ratingsContainer.style.display = 'block';
       
