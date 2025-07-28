@@ -1,0 +1,42 @@
+{
+  "mcpServers": {
+    "mcp-compass": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@liuyoshio/mcp-compass"
+      ],
+      "disabled": false,
+      "autoApprove": []
+    },
+    "sequential-thinking": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-sequential-thinking"
+      ],
+      "disabled": false,
+      "autoApprove": [
+        "sequentialthinking"
+      ]
+    },
+    "allpepper-memory-bank": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@allpepper/memory-bank-mcp"
+      ],
+      "env": {
+        "MEMORY_BANK_ROOT": "<path-to-bank>"
+      },
+      "disabled": false,
+      "autoApprove": [
+        "memory_bank_read",
+        "memory_bank_write",
+        "memory_bank_update",
+        "list_projects",
+        "list_project_files"
+      ]
+    }
+  }
+}
