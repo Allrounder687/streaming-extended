@@ -18,7 +18,9 @@
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": truee2
+    "noFallthroughCasesInSwitch": true,
+    "types": []
   },
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": ["*.js", "background.js", "content.js", "popup.js", "options.js"]
 }

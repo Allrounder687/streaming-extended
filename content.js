@@ -448,9 +448,19 @@
         monthlyStats: {}
       };
 
-      this.init();
-      this.setupKeyboardShortcuts();
-      this.loadStatistics();
+      // Initialize asynchronously
+      this.initialize();
+    }
+
+    // Initialize the extension asynchronously
+    async initialize() {
+      try {
+        await this.init();
+        this.setupKeyboardShortcuts();
+        this.loadStatistics();
+      } catch (error) {
+        console.error('Streaming Extended: Failed to initialize:', error);
+      }
     }
 
     // Debug logging method
@@ -635,6 +645,8 @@
       });
 
       // Handle extension context invalidation
+      console.log('Streaming Extended: About to call setupContextInvalidationHandler, this:', this);
+      console.log('Streaming Extended: setupContextInvalidationHandler type:', typeof this.setupContextInvalidationHandler);
       this.setupContextInvalidationHandler();
 
       if (this.isEnabled) {

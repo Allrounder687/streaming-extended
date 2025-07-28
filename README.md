@@ -7,6 +7,7 @@ Automatically skip intros, credits, and recaps across **Netflix**, **Hotstar**, 
 ## ✨ Features
 
 ### 🎯 **Multi-Platform Support**
+
 - **Netflix** - Skip intros, credits, and auto-next episode
 - **Hotstar** - Complete skip functionality with regional support
 - **Prime Video** - Smart button detection and skipping
@@ -15,12 +16,14 @@ Automatically skip intros, credits, and recaps across **Netflix**, **Hotstar**, 
 - **Max** - Auto-skip functionality
 
 ### ⌨️ **Keyboard Shortcuts**
+
 - **Ctrl+Shift+S** - Toggle extension on/off
 - **Ctrl+Shift+N** - Force next episode
 - **Ctrl+Shift+I** - Manual skip intro/credits
 - **Customizable hotkeys** in options page
 
 ### 📊 **Advanced Analytics**
+
 - **Time saved tracking** with detailed statistics
 - **Skip counters** by type (intro, credits, recap, manual)
 - **Show tracking** - see your most watched content
@@ -28,6 +31,7 @@ Automatically skip intros, credits, and recaps across **Netflix**, **Hotstar**, 
 - **Platform-specific insights**
 
 ### 🎨 **Enhanced User Experience**
+
 - **Smart platform detection** with optimized selectors
 - **Visual notifications** with platform badges
 - **Professional dark theme** UI
@@ -37,9 +41,11 @@ Automatically skip intros, credits, and recaps across **Netflix**, **Hotstar**, 
 ## 🚀 Installation
 
 ### Chrome Web Store (Recommended)
-*Coming soon - extension will be published to Chrome Web Store*
+
+_Coming soon - extension will be published to Chrome Web Store_
 
 ### Manual Installation
+
 1. Download the latest release or clone this repository
 2. Run `npm install` to install dependencies
 3. Run `npm run build-extension` to build the extension
@@ -50,31 +56,36 @@ Automatically skip intros, credits, and recaps across **Netflix**, **Hotstar**, 
 ## 🎮 Usage
 
 ### Automatic Operation
+
 The extension works automatically once installed:
+
 - Detects your streaming platform
 - Monitors for skip buttons
 - Automatically clicks them based on your settings
 - Tracks statistics and usage
 
 ### Manual Controls
+
 - Use keyboard shortcuts for instant control
 - Toggle settings in the popup (click extension icon)
 - Access advanced options via the options page
 - View detailed statistics and insights
 
 ### Supported Platforms
-| Platform | Skip Intro | Skip Credits | Next Episode | Show Tracking |
-|----------|------------|--------------|--------------|---------------|
-| Netflix | ✅ | ✅ | ✅ | ✅ |
-| Hotstar | ✅ | ✅ | ✅ | ✅ |
-| Prime Video | ✅ | ✅ | ✅ | ✅ |
-| Disney+ | ✅ | ✅ | ✅ | ✅ |
-| Hulu | ✅ | ✅ | ✅ | ✅ |
-| Max | ✅ | ✅ | ✅ | ✅ |
+
+| Platform    | Skip Intro | Skip Credits | Next Episode | Show Tracking |
+| ----------- | ---------- | ------------ | ------------ | ------------- |
+| Netflix     | ✅         | ✅           | ✅           | ✅            |
+| Hotstar     | ✅         | ✅           | ✅           | ✅            |
+| Prime Video | ✅         | ✅           | ✅           | ✅            |
+| Disney+     | ✅         | ✅           | ✅           | ✅            |
+| Hulu        | ✅         | ✅           | ✅           | ✅            |
+| Max         | ✅         | ✅           | ✅           | ✅            |
 
 ## ⚙️ Configuration
 
 ### Basic Settings
+
 - **Auto-skip intros** - Automatically skip episode intros
 - **Auto-skip credits** - Skip end credits
 - **Auto-skip recaps** - Skip "previously on" segments
@@ -83,6 +94,7 @@ The extension works automatically once installed:
 - **Next episode delay** - Delay before next episode (instant to 10 seconds)
 
 ### Advanced Options
+
 - **Keyboard shortcuts** - Customize hotkey combinations
 - **Visual notifications** - Toggle skip indicators
 - **Statistics tracking** - Enable/disable usage analytics
@@ -93,18 +105,21 @@ The extension works automatically once installed:
 Track your streaming habits with comprehensive analytics:
 
 ### Overview Stats
+
 - **Total skips performed** across all platforms
 - **Time saved** (formatted as hours/minutes/seconds)
 - **Platform breakdown** showing usage per service
 - **Session tracking** with daily counts
 
 ### Detailed Insights
+
 - **Weekly/monthly trends** with skip counts
 - **Most watched shows** with view counts
 - **Skip type breakdown** (intro vs credits vs manual)
 - **Platform comparison** and preferences
 
 ### Export & Privacy
+
 - All data stored locally in your browser
 - No external data collection or transmission
 - Export statistics for personal use
@@ -113,10 +128,12 @@ Track your streaming habits with comprehensive analytics:
 ## 🛠️ Development
 
 ### Prerequisites
+
 - Node.js 16+ and npm
 - Chrome browser for testing
 
 ### Setup
+
 ```bash
 # Clone the repository
 git clone https://github.com/yourusername/streaming-extended.git
@@ -136,6 +153,7 @@ npm run lint
 ```
 
 ### Project Structure
+
 ```
 streaming-extended/
 ├── src/                    # React components (for development)
@@ -150,6 +168,7 @@ streaming-extended/
 ```
 
 ### Architecture
+
 - **Platform Handlers** - Modular platform-specific logic
 - **Base Handler Class** - Shared functionality across platforms
 - **Statistics Engine** - Comprehensive tracking and analytics
@@ -161,6 +180,7 @@ streaming-extended/
 We welcome contributions! Here's how you can help:
 
 ### Adding New Platforms
+
 1. Create a new handler class extending `BasePlatformHandler`
 2. Define platform-specific selectors and logic
 3. Add platform detection in `PlatformDetector`
@@ -168,12 +188,14 @@ We welcome contributions! Here's how you can help:
 5. Test thoroughly and submit PR
 
 ### Improving Existing Platforms
+
 - Update selectors for better button detection
 - Improve show name extraction
 - Enhance platform-specific features
 - Report and fix bugs
 
 ### Feature Requests
+
 - Open an issue with detailed description
 - Explain use case and benefits
 - Provide mockups or examples if applicable
@@ -198,4 +220,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 **Made with ❤️ for streaming enthusiasts worldwide**
 
-*Streaming Extended - Skip the wait, enjoy the show!*
+_Streaming Extended - Skip the wait, enjoy the show!_
