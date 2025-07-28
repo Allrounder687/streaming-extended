@@ -21,6 +21,9 @@ class OptionsManager {
         'skipDelay',
         'nextEpisodeDelay',
         'showNotifications',
+        'showIMDBRatings',
+        'ratingsPosition',
+        'ratingsAutoHide',
         'shortcuts'
       ], (result) => {
         // Set defaults if not found
@@ -32,6 +35,9 @@ class OptionsManager {
           skipDelay: result.skipDelay || 1000,
           nextEpisodeDelay: result.nextEpisodeDelay !== undefined ? result.nextEpisodeDelay : 0,
           showNotifications: result.showNotifications !== undefined ? result.showNotifications : true,
+          showIMDBRatings: result.showIMDBRatings !== undefined ? result.showIMDBRatings : true,
+          ratingsPosition: result.ratingsPosition || 'top-right',
+          ratingsAutoHide: result.ratingsAutoHide !== undefined ? result.ratingsAutoHide : 10000,
           shortcuts: result.shortcuts || {
             toggleExtension: 'ctrl+shift+s',
             forceNextEpisode: 'ctrl+shift+n',

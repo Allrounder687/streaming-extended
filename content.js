@@ -1756,6 +1756,24 @@
   // Initialize the extension
   try {
     new StreamingExtended();
+    
+    // Initialize IMDB Ratings after a short delay to ensure DOM is ready
+    setTimeout(() => {
+      try {
+        // Load IMDB ratings script
+        const script = document.createElement('script');
+        script.src = chrome.runtime.getURL('imdb-ratings.js');
+        script.onload = () => {
+          // Initialize IMDB ratings
+          window.imdbRatings = new window.IMDBRatings();
+          console.log('Streaming Extended: IMDB Ratings initialized');
+        };
+        document.head.appendChild(script);
+      } catch (error) {
+        console.error('Streaming Extended: Failed to initialize IMDB ratings:', error);
+      }
+    }, 2000);
+    
   } catch (error) {
     console.error('Streaming Extended: Failed to initialize:', error);
   }

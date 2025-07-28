@@ -23,7 +23,8 @@ class PopupManager {
         'autoNextEpisode',
         'skipDelay',
         'nextEpisodeDelay',
-        'showNotifications'
+        'showNotifications',
+        'showIMDBRatings'
       ], (result) => {
         // Set defaults if not found
         this.settings = {
@@ -34,7 +35,8 @@ class PopupManager {
           autoNextEpisode: result.autoNextEpisode !== undefined ? result.autoNextEpisode : true,
           skipDelay: result.skipDelay || 1000,
           nextEpisodeDelay: result.nextEpisodeDelay !== undefined ? result.nextEpisodeDelay : 0,
-          showNotifications: result.showNotifications !== undefined ? result.showNotifications : true
+          showNotifications: result.showNotifications !== undefined ? result.showNotifications : true,
+          showIMDBRatings: result.showIMDBRatings !== undefined ? result.showIMDBRatings : true
         };
         resolve();
       });
@@ -118,7 +120,8 @@ class PopupManager {
       'autoSkipCredits',
       'autoSkipRecap',
       'autoNextEpisode',
-      'showNotifications'
+      'showNotifications',
+      'showIMDBRatings'
     ];
     
     toggles.forEach(id => {

@@ -161,6 +161,57 @@
       </section>
 
       <section class="section">
+        <h2>Content Enhancement</h2>
+        <div class="setting-grid">
+          <div class="setting-card">
+            <div class="setting-header">
+              <h3>IMDB Ratings</h3>
+              <label class="toggle">
+                <input type="checkbox" id="showIMDBRatings">
+                <span class="slider"></span>
+              </label>
+            </div>
+            <p class="setting-description">
+              Display IMDB, Rotten Tomatoes, and Metacritic ratings overlay while watching content
+            </p>
+            <div class="setting-details">
+              <small>Ratings are fetched from OMDB API and cached for better performance</small>
+            </div>
+          </div>
+
+          <div class="setting-card">
+            <div class="setting-header">
+              <h3>Ratings Position</h3>
+              <select id="ratingsPosition" class="select">
+                <option value="top-right">Top Right</option>
+                <option value="top-left">Top Left</option>
+                <option value="bottom-right">Bottom Right</option>
+                <option value="bottom-left">Bottom Left</option>
+              </select>
+            </div>
+            <p class="setting-description">
+              Choose where to display the ratings overlay on the screen
+            </p>
+          </div>
+
+          <div class="setting-card">
+            <div class="setting-header">
+              <h3>Auto-hide Ratings</h3>
+              <select id="ratingsAutoHide" class="select">
+                <option value="never">Never</option>
+                <option value="5000">After 5 seconds</option>
+                <option value="10000">After 10 seconds</option>
+                <option value="15000">After 15 seconds</option>
+              </select>
+            </div>
+            <p class="setting-description">
+              Automatically fade out ratings after the specified time
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
         <h2>About</h2>
         <div class="about-card">
           <div class="about-content">

@@ -14,7 +14,8 @@
     "https://*.primevideo.com/*",
     "https://*.disneyplus.com/*",
     "https://*.hulu.com/*",
-    "https://*.max.com/*"
+    "https://*.max.com/*",
+    "https://www.omdbapi.com/*"
   ],
   "background": {
     "service_worker": "background.js"
@@ -47,5 +48,18 @@
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",
     "128": "icons/icon128.png"
-  }
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["imdb-ratings.js"],
+      "matches": [
+        "https://*.hotstar.com/*",
+        "https://*.netflix.com/*",
+        "https://*.primevideo.com/*",
+        "https://*.disneyplus.com/*",
+        "https://*.hulu.com/*",
+        "https://*.max.com/*"
+      ]
+    }
+  ]
 }
