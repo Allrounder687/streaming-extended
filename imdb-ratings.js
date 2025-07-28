@@ -1,27 +1,168 @@
 // IMDB Ratings Module for Streaming Extended
-class IMDBRatings {
+
+// Platform Strategy Pattern Implementation
+class PlatformStrategy {
+    constructor(name, selectors, titleCleaners = []) {
+        this.name = name;
+        this.selectors = selectors;
+        this.titleCleaners = titleCleaners;
+    }
+    
+    extractTitle() {
+        for (const selector of this.selectors) {
+            const element = document.querySelector(selector);
+            if (element && element.textContent.trim()) {
+                return this.cleanTitle(element.textContent.trim());
+            }
+        }
+        
+        // Fallback to document title
+        const docTitle = document.title;
+        if (docTitle && !docTitle.includes(this.name)) {
+            return this.cleanTitle(docTitle.replace(` - ${this.name}`, ''));
+        }
+        
+        return null;
+    }
+    
+    cleanTitle(title) {
+        let cleaned = title;
+        for (const cleaner of this.titleCleaners) {
+            cleaned = cleaned.replace(cleaner.pattern, cleaner.replacement);
+        }
+        return cleaned.trim();
+    }
+}
+
+class PlatformDetector {
     constructor() {
-        this.apiKey = 'e27bfcaa';
+        this.strategies = new Map([
+            ['netflix.com', new PlatformStrategy('Netflix', [
+                'h1[data-uia="video-title"]',
+                '.video-title h4',
+                '.PlayerControlsNeo__title',
+                '[data-uia="video-title"]',
+                '.watch-video--title-text',
+                'h1.title-text'
+            ], [
+                { pattern: /\s*-\s*Netflix.*$/i, replacement: '' },
+                { pattern: /\s*\|\s*.*$/, replacement: '' },
+                { pattern: /\s*:\s*Season\s*\d+.*$/i, replacement: '' },
+                { pattern: /\s*S\d+.*$/i, replacement: '' }
+            ])],
+            
+            ['hotstar.com', new PlatformStrategy('Hotstar', [
+                '.player-title',
+                '.content-title',
+                'h1.title',
+                '.video-title',
+                '[data-testid="title"]'
+            ])],
+            
+            ['primevideo.com', new PlatformStrategy('Prime Video', [
+                '[data-testid="title"]',
+                '.title',
+                'h1[data-automation-id="title"]',
+                '.av-detail-section h1',
+                '.dv-node-dp-title'
+            ])],
+            
+            ['disneyplus.com', new PlatformStrategy('Disney+', [
+                '[data-testid="hero-title"]',
+                '.title-field',
+                'h1.title',
+                '.content-title'
+            ])],
+            
+            ['hulu.com', new PlatformStrategy('Hulu', [
+                '[data-automationid="details-title"]',
+                '.content-title',
+                'h1.title'
+            ])],
+            
+            ['max.com', new PlatformStrategy('Max', [
+                '[data-testid="title"]',
+                '.content-title',
+                'h1.title'
+            ])]
+        ]);
+    }
+    
+    extractCurrentTitle() {
+        const hostname = window.location.hostname;
+        for (const [domain, strategy] of this.strategies) {
+            if (hostname.includes(domain)) {
+                return strategy.extractTitle();
+            }
+        }
+        return null;
+    }
+}
+
+class IMDBRatings {
+    constructor(config = {}) {
+        // Configuration constants
+        this.config = {
+            INITIAL_CHECK_DELAY: 1000,
+            CACHE_DURATION: 60 * 60 * 1000, // 1 hour
+            ERROR_HIDE_DELAY: 5000,
+            RATING_FADE_DELAY: 10000,
+            POLLING_INTERVAL: 10000, // Reduced frequency
+            DEBOUNCE_DELAY: 500,
+            MAX_RETRIES: 3,
+            API_TIMEOUT: 5000,
+            ...config
+        };
+
+        // Core properties
         this.baseUrl = 'https://www.omdbapi.com/';
         this.cache = new Map();
         this.ratingsContainer = null;
         this.currentTitle = null;
         this.retryCount = 0;
-        this.maxRetries = 3;
+        this.isInitialized = false;
         
-        // Initialize ratings display
-        this.init();
+        // Cleanup references
+        this.titleObserver = null;
+        this.fallbackInterval = null;
+        this.platformDetector = new PlatformDetector();
+        
+        // Initialize API key securely
+        this.initializeApiKey();
     }
 
-    init() {
-        // Create ratings container
-        this.createRatingsContainer();
+    async initializeApiKey() {
+        try {
+            const result = await chrome.storage.sync.get(['omdbApiKey']);
+            this.apiKey = result.omdbApiKey || 'e27bfcaa'; // Fallback key
+        } catch (error) {
+            console.warn('Failed to load API key from storage, using fallback');
+            this.apiKey = 'e27bfcaa';
+        }
+    }
+
+    async initialize() {
+        if (this.isInitialized) return;
         
-        // Start monitoring for title changes
-        this.startTitleMonitoring();
-        
-        // Add CSS styles
-        this.addStyles();
+        try {
+            // Ensure API key is loaded
+            if (!this.apiKey) {
+                await this.initializeApiKey();
+            }
+            
+            // Create ratings container
+            this.createRatingsContainer();
+            
+            // Start monitoring for title changes
+            this.startTitleMonitoring();
+            
+            // Add CSS styles
+            this.addStyles();
+            
+            this.isInitialized = true;
+        } catch (error) {
+            console.error('Failed to initialize IMDB Ratings:', error);
+        }
     }
 
     createRatingsContainer() {
@@ -46,154 +187,40 @@ class IMDBRatings {
         const styleId = 'streaming-extended-ratings-styles';
         if (document.getElementById(styleId)) return;
 
+        try {
+            // Try to load external CSS file if available (for extension context)
+            if (typeof chrome !== 'undefined' && chrome.runtime) {
+                const link = document.createElement('link');
+                link.id = styleId;
+                link.rel = 'stylesheet';
+                link.href = chrome.runtime.getURL('styles/imdb-ratings.css');
+                document.head.appendChild(link);
+            } else {
+                // Fallback to inline styles for development/testing
+                this.addInlineStyles(styleId);
+            }
+        } catch (error) {
+            console.warn('Failed to load external CSS, using inline styles:', error);
+            this.addInlineStyles(styleId);
+        }
+    }
+
+    addInlineStyles(styleId) {
+        // Minimal inline styles as fallback
         const styles = `
             .se-ratings-container {
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                background: rgba(0, 0, 0, 0.9);
-                color: white;
-                padding: 12px 16px;
-                border-radius: 8px;
+                position: fixed; top: 20px; right: 20px; background: rgba(0,0,0,0.9);
+                color: white; padding: 12px 16px; border-radius: 8px; z-index: 10000;
                 font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-                font-size: 14px;
-                z-index: 10000;
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-                backdrop-filter: blur(10px);
-                border: 1px solid rgba(255, 255, 255, 0.1);
-                min-width: 200px;
-                transition: all 0.3s ease;
+                font-size: 14px; min-width: 200px; transition: all 0.3s ease;
             }
-
-            .se-ratings-container:hover {
-                background: rgba(0, 0, 0, 0.95);
-                transform: translateY(-2px);
-                box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
-            }
-
-            .se-rating-title {
-                font-weight: 600;
-                margin-bottom: 8px;
-                font-size: 15px;
-                color: #fff;
-                line-height: 1.3;
-                max-width: 250px;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                white-space: nowrap;
-            }
-
-            .se-rating-item {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin: 6px 0;
-                padding: 4px 0;
-            }
-
-            .se-rating-source {
-                font-weight: 500;
-                color: #ccc;
-            }
-
-            .se-rating-value {
-                font-weight: 600;
-                padding: 2px 8px;
-                border-radius: 4px;
-                font-size: 13px;
-            }
-
-            .se-rating-imdb {
-                background: #f5c518;
-                color: #000;
-            }
-
-            .se-rating-rt {
-                background: #fa320a;
-                color: #fff;
-            }
-
-            .se-rating-metacritic {
-                background: #ffcc33;
-                color: #000;
-            }
-
-            .se-rating-loading {
-                color: #888;
-                font-style: italic;
-                text-align: center;
-                padding: 8px 0;
-            }
-
-            .se-rating-error {
-                color: #ff6b6b;
-                font-size: 12px;
-                text-align: center;
-                padding: 4px 0;
-            }
-
-            .se-rating-close {
-                position: absolute;
-                top: 8px;
-                right: 8px;
-                background: none;
-                border: none;
-                color: #ccc;
-                cursor: pointer;
-                font-size: 16px;
-                width: 20px;
-                height: 20px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                border-radius: 50%;
-                transition: all 0.2s ease;
-            }
-
-            .se-rating-close:hover {
-                background: rgba(255, 255, 255, 0.1);
-                color: #fff;
-            }
-
-            .se-rating-year {
-                color: #888;
-                font-size: 12px;
-                margin-left: 8px;
-            }
-
-            .se-rating-genre {
-                color: #aaa;
-                font-size: 11px;
-                margin-top: 4px;
-                opacity: 0.8;
-            }
-
-            /* Platform-specific positioning */
-            .netflix .se-ratings-container {
-                top: 80px;
-                right: 30px;
-            }
-
-            .hotstar .se-ratings-container {
-                top: 100px;
-                right: 25px;
-            }
-
-            .primevideo .se-ratings-container {
-                top: 90px;
-                right: 35px;
-            }
-
-            /* Mobile responsive */
-            @media (max-width: 768px) {
-                .se-ratings-container {
-                    top: 10px;
-                    right: 10px;
-                    left: 10px;
-                    min-width: auto;
-                    font-size: 13px;
-                }
-            }
+            .se-rating-title { font-weight: 600; margin-bottom: 8px; }
+            .se-rating-item { display: flex; justify-content: space-between; margin: 6px 0; }
+            .se-rating-close { position: absolute; top: 8px; right: 8px; background: none;
+                border: none; color: #ccc; cursor: pointer; }
+            .se-rating-imdb { background: #f5c518; color: #000; padding: 2px 8px; border-radius: 4px; }
+            .se-rating-rt { background: #fa320a; color: #fff; padding: 2px 8px; border-radius: 4px; }
+            .se-rating-metacritic { background: #ffcc33; color: #000; padding: 2px 8px; border-radius: 4px; }
         `;
 
         const styleSheet = document.createElement('style');
@@ -203,17 +230,52 @@ class IMDBRatings {
     }
 
     startTitleMonitoring() {
-        // Monitor for title changes every 2 seconds
-        setInterval(() => {
+        // Use MutationObserver for efficient DOM watching
+        this.titleObserver = new MutationObserver(
+            this.debounce(() => this.checkForTitleChange(), this.config.DEBOUNCE_DELAY)
+        );
+        
+        this.titleObserver.observe(document, {
+            childList: true,
+            subtree: true,
+            attributes: true,
+            attributeFilter: ['title']
+        });
+        
+        // Fallback polling with longer interval
+        this.fallbackInterval = setInterval(() => {
             this.checkForTitleChange();
-        }, 2000);
+        }, this.config.POLLING_INTERVAL);
 
-        // Also check immediately
-        setTimeout(() => this.checkForTitleChange(), 1000);
+        // Initial check
+        setTimeout(() => this.checkForTitleChange(), this.config.INITIAL_CHECK_DELAY);
+    }
+
+    debounce(func, wait) {
+        let timeout;
+        return (...args) => {
+            const later = () => {
+                clearTimeout(timeout);
+                func.apply(this, args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    }
+
+    cleanup() {
+        if (this.titleObserver) {
+            this.titleObserver.disconnect();
+            this.titleObserver = null;
+        }
+        if (this.fallbackInterval) {
+            clearInterval(this.fallbackInterval);
+            this.fallbackInterval = null;
+        }
     }
 
     checkForTitleChange() {
-        const title = this.extractCurrentTitle();
+        const title = this.platformDetector.extractCurrentTitle();
         
         if (title && title !== this.currentTitle && title.length > 2) {
             this.currentTitle = title;
@@ -223,155 +285,7 @@ class IMDBRatings {
         }
     }
 
-    extractCurrentTitle() {
-        // Platform-specific title extraction
-        const hostname = window.location.hostname;
-        
-        if (hostname.includes('netflix.com')) {
-            return this.extractNetflixTitle();
-        } else if (hostname.includes('hotstar.com')) {
-            return this.extractHotstarTitle();
-        } else if (hostname.includes('primevideo.com')) {
-            return this.extractPrimeVideoTitle();
-        } else if (hostname.includes('disneyplus.com')) {
-            return this.extractDisneyPlusTitle();
-        } else if (hostname.includes('hulu.com')) {
-            return this.extractHuluTitle();
-        } else if (hostname.includes('max.com')) {
-            return this.extractMaxTitle();
-        }
-        
-        return null;
-    }
 
-    extractNetflixTitle() {
-        // Try multiple selectors for Netflix
-        const selectors = [
-            'h1[data-uia="video-title"]',
-            '.video-title h4',
-            '.PlayerControlsNeo__title',
-            '[data-uia="video-title"]',
-            '.watch-video--title-text',
-            'h1.title-text'
-        ];
-        
-        for (const selector of selectors) {
-            const element = document.querySelector(selector);
-            if (element && element.textContent.trim()) {
-                return this.cleanTitle(element.textContent.trim());
-            }
-        }
-        
-        // Fallback to document title
-        const docTitle = document.title;
-        if (docTitle && docTitle !== 'Netflix') {
-            return this.cleanTitle(docTitle.replace(' - Netflix', ''));
-        }
-        
-        return null;
-    }
-
-    extractHotstarTitle() {
-        const selectors = [
-            '.player-title',
-            '.content-title',
-            'h1.title',
-            '.video-title',
-            '[data-testid="title"]'
-        ];
-        
-        for (const selector of selectors) {
-            const element = document.querySelector(selector);
-            if (element && element.textContent.trim()) {
-                return this.cleanTitle(element.textContent.trim());
-            }
-        }
-        
-        return null;
-    }
-
-    extractPrimeVideoTitle() {
-        const selectors = [
-            '[data-testid="title"]',
-            '.title',
-            'h1[data-automation-id="title"]',
-            '.av-detail-section h1',
-            '.dv-node-dp-title'
-        ];
-        
-        for (const selector of selectors) {
-            const element = document.querySelector(selector);
-            if (element && element.textContent.trim()) {
-                return this.cleanTitle(element.textContent.trim());
-            }
-        }
-        
-        return null;
-    }
-
-    extractDisneyPlusTitle() {
-        const selectors = [
-            '[data-testid="hero-title"]',
-            '.title-field',
-            'h1.title',
-            '.content-title'
-        ];
-        
-        for (const selector of selectors) {
-            const element = document.querySelector(selector);
-            if (element && element.textContent.trim()) {
-                return this.cleanTitle(element.textContent.trim());
-            }
-        }
-        
-        return null;
-    }
-
-    extractHuluTitle() {
-        const selectors = [
-            '[data-automationid="details-title"]',
-            '.content-title',
-            'h1.title'
-        ];
-        
-        for (const selector of selectors) {
-            const element = document.querySelector(selector);
-            if (element && element.textContent.trim()) {
-                return this.cleanTitle(element.textContent.trim());
-            }
-        }
-        
-        return null;
-    }
-
-    extractMaxTitle() {
-        const selectors = [
-            '[data-testid="title"]',
-            '.content-title',
-            'h1.title'
-        ];
-        
-        for (const selector of selectors) {
-            const element = document.querySelector(selector);
-            if (element && element.textContent.trim()) {
-                return this.cleanTitle(element.textContent.trim());
-            }
-        }
-        
-        return null;
-    }
-
-    cleanTitle(title) {
-        // Remove common suffixes and clean up title
-        return title
-            .replace(/\s*-\s*(Netflix|Prime Video|Disney\+|Hulu|Max|Hotstar).*$/i, '')
-            .replace(/\s*\|\s*.*$/, '')
-            .replace(/\s*:\s*Season\s*\d+.*$/i, '')
-            .replace(/\s*S\d+.*$/i, '')
-            .replace(/\s*Episode\s*\d+.*$/i, '')
-            .replace(/\s*E\d+.*$/i, '')
-            .trim();
-    }
 
     async fetchAndDisplayRatings(title) {
         if (!title || title.length < 2) return;
@@ -380,7 +294,7 @@ class IMDBRatings {
         const cacheKey = title.toLowerCase();
         if (this.cache.has(cacheKey)) {
             const cachedData = this.cache.get(cacheKey);
-            if (Date.now() - cachedData.timestamp < 3600000) { // 1 hour cache
+            if (Date.now() - cachedData.timestamp < this.config.CACHE_DURATION) {
                 this.displayRatings(cachedData.data, title);
                 return;
             }
@@ -403,7 +317,7 @@ class IMDBRatings {
                 this.retryCount = 0;
             } else {
                 // Try alternative search if first attempt fails
-                if (this.retryCount < this.maxRetries) {
+                if (this.retryCount < this.config.MAX_RETRIES) {
                     this.retryCount++;
                     const alternativeTitle = this.getAlternativeTitle(title);
                     if (alternativeTitle !== title) {
@@ -421,15 +335,38 @@ class IMDBRatings {
         }
     }
 
-    async fetchFromOMDB(title) {
-        const url = `${this.baseUrl}?apikey=${this.apiKey}&t=${encodeURIComponent(title)}&plot=short`;
+    async fetchFromOMDB(title, retryCount = 0) {
+        const maxRetries = 3;
+        const retryDelay = Math.pow(2, retryCount) * 1000; // Exponential backoff
         
-        const response = await fetch(url);
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+        try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), this.config.API_TIMEOUT);
+            
+            const url = `${this.baseUrl}?apikey=${this.apiKey}&t=${encodeURIComponent(title)}&plot=short`;
+            const response = await fetch(url, {
+                signal: controller.signal
+            });
+            
+            clearTimeout(timeoutId);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+            
+            return await response.json();
+        } catch (error) {
+            if (retryCount < maxRetries && error.name !== 'AbortError') {
+                console.warn(`OMDB API retry ${retryCount + 1}/${maxRetries}:`, error.message);
+                await this.delay(retryDelay);
+                return this.fetchFromOMDB(title, retryCount + 1);
+            }
+            throw error;
         }
-        
-        return await response.json();
+    }
+
+    delay(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
     }
 
     getAlternativeTitle(title) {
@@ -444,11 +381,29 @@ class IMDBRatings {
     showLoading(title) {
         if (!this.ratingsContainer) return;
 
-        this.ratingsContainer.innerHTML = `
-            <button class="se-rating-close" onclick="this.parentElement.style.display='none'">×</button>
-            <div class="se-rating-title">${this.truncateTitle(title)}</div>
-            <div class="se-rating-loading">Loading ratings...</div>
-        `;
+        // Clear existing content
+        this.ratingsContainer.innerHTML = '';
+        
+        // Create close button
+        const closeButton = document.createElement('button');
+        closeButton.className = 'se-rating-close';
+        closeButton.textContent = '×';
+        closeButton.addEventListener('click', () => this.hideRatings());
+        
+        // Create title element
+        const titleElement = document.createElement('div');
+        titleElement.className = 'se-rating-title';
+        titleElement.textContent = this.truncateTitle(title);
+        
+        // Create loading element
+        const loadingElement = document.createElement('div');
+        loadingElement.className = 'se-rating-loading';
+        loadingElement.textContent = 'Loading ratings...';
+        
+        // Append elements
+        this.ratingsContainer.appendChild(closeButton);
+        this.ratingsContainer.appendChild(titleElement);
+        this.ratingsContainer.appendChild(loadingElement);
         
         this.ratingsContainer.style.display = 'block';
     }
@@ -458,40 +413,70 @@ class IMDBRatings {
 
         const ratings = this.parseRatings(data);
         
-        let ratingsHTML = `
-            <button class="se-rating-close" onclick="this.parentElement.style.display='none'">×</button>
-            <div class="se-rating-title">
-                ${this.truncateTitle(title)}
-                ${data.Year ? `<span class="se-rating-year">(${data.Year})</span>` : ''}
-            </div>
-        `;
+        // Clear existing content
+        this.ratingsContainer.innerHTML = '';
+        
+        // Create close button
+        const closeButton = document.createElement('button');
+        closeButton.className = 'se-rating-close';
+        closeButton.textContent = '×';
+        closeButton.addEventListener('click', () => this.hideRatings());
+        
+        // Create title container
+        const titleContainer = document.createElement('div');
+        titleContainer.className = 'se-rating-title';
+        titleContainer.textContent = this.truncateTitle(title);
+        
+        if (data.Year) {
+            const yearSpan = document.createElement('span');
+            yearSpan.className = 'se-rating-year';
+            yearSpan.textContent = `(${data.Year})`;
+            titleContainer.appendChild(yearSpan);
+        }
+        
+        // Append header elements
+        this.ratingsContainer.appendChild(closeButton);
+        this.ratingsContainer.appendChild(titleContainer);
 
         if (ratings.length > 0) {
             ratings.forEach(rating => {
-                ratingsHTML += `
-                    <div class="se-rating-item">
-                        <span class="se-rating-source">${rating.source}</span>
-                        <span class="se-rating-value se-rating-${rating.class}">${rating.value}</span>
-                    </div>
-                `;
+                const ratingItem = document.createElement('div');
+                ratingItem.className = 'se-rating-item';
+                
+                const sourceSpan = document.createElement('span');
+                sourceSpan.className = 'se-rating-source';
+                sourceSpan.textContent = rating.source;
+                
+                const valueSpan = document.createElement('span');
+                valueSpan.className = `se-rating-value se-rating-${rating.class}`;
+                valueSpan.textContent = rating.value;
+                
+                ratingItem.appendChild(sourceSpan);
+                ratingItem.appendChild(valueSpan);
+                this.ratingsContainer.appendChild(ratingItem);
             });
             
             if (data.Genre) {
-                ratingsHTML += `<div class="se-rating-genre">${data.Genre}</div>`;
+                const genreDiv = document.createElement('div');
+                genreDiv.className = 'se-rating-genre';
+                genreDiv.textContent = data.Genre;
+                this.ratingsContainer.appendChild(genreDiv);
             }
         } else {
-            ratingsHTML += '<div class="se-rating-error">No ratings available</div>';
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'se-rating-error';
+            errorDiv.textContent = 'No ratings available';
+            this.ratingsContainer.appendChild(errorDiv);
         }
 
-        this.ratingsContainer.innerHTML = ratingsHTML;
         this.ratingsContainer.style.display = 'block';
 
-        // Auto-hide after 10 seconds
+        // Auto-fade after configured delay
         setTimeout(() => {
             if (this.ratingsContainer && this.ratingsContainer.style.display !== 'none') {
                 this.ratingsContainer.style.opacity = '0.7';
             }
-        }, 10000);
+        }, this.config.RATING_FADE_DELAY);
     }
 
     parseRatings(data) {
@@ -535,17 +520,30 @@ class IMDBRatings {
     showError(message) {
         if (!this.ratingsContainer) return;
 
-        this.ratingsContainer.innerHTML = `
-            <button class="se-rating-close" onclick="this.parentElement.style.display='none'">×</button>
-            <div class="se-rating-error">${message}</div>
-        `;
+        // Clear existing content
+        this.ratingsContainer.innerHTML = '';
+        
+        // Create close button
+        const closeButton = document.createElement('button');
+        closeButton.className = 'se-rating-close';
+        closeButton.textContent = '×';
+        closeButton.addEventListener('click', () => this.hideRatings());
+        
+        // Create error element
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'se-rating-error';
+        errorDiv.textContent = message;
+        
+        // Append elements
+        this.ratingsContainer.appendChild(closeButton);
+        this.ratingsContainer.appendChild(errorDiv);
         
         this.ratingsContainer.style.display = 'block';
         
-        // Auto-hide error after 5 seconds
+        // Auto-hide error after configured delay
         setTimeout(() => {
             this.hideRatings();
-        }, 5000);
+        }, this.config.ERROR_HIDE_DELAY);
     }
 
     hideRatings() {
@@ -569,5 +567,25 @@ class IMDBRatings {
     }
 }
 
-// Export for use in content script
-window.IMDBRatings = IMDBRatings;
+// Auto-initialize when loaded in browser extension context
+if (typeof window !== 'undefined') {
+    // Export for use in content script
+    window.IMDBRatings = IMDBRatings;
+    window.PlatformDetector = PlatformDetector;
+    window.PlatformStrategy = PlatformStrategy;
+    
+    // Auto-initialize if not in a module context
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!window.imdbRatingsInstance) {
+                window.imdbRatingsInstance = new IMDBRatings();
+                window.imdbRatingsInstance.initialize();
+            }
+        });
+    } else {
+        if (!window.imdbRatingsInstance) {
+            window.imdbRatingsInstance = new IMDBRatings();
+            window.imdbRatingsInstance.initialize();
+        }
+    }
+}

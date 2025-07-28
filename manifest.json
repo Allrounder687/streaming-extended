@@ -30,7 +30,7 @@
         "https://*.hulu.com/*",
         "https://*.max.com/*"
       ],
-      "js": ["content.js"],
+      "js": ["imdb-ratings.js", "content.js"],
       "css": ["content.css"]
     }
   ],
@@ -48,5 +48,18 @@
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",
     "128": "icons/icon128.png"
-  }
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["styles/imdb-ratings.css"],
+      "matches": [
+        "https://*.hotstar.com/*",
+        "https://*.netflix.com/*",
+        "https://*.primevideo.com/*",
+        "https://*.disneyplus.com/*",
+        "https://*.hulu.com/*",
+        "https://*.max.com/*"
+      ]
+    }
+  ]
 }
