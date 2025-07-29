@@ -20,7 +20,7 @@ Automatically skip intros, credits, and recaps across **Netflix**, **Hotstar**, 
 - **Ctrl+Shift+S** - Toggle extension on/off
 - **Ctrl+Shift+N** - Force next episode
 - **Ctrl+Shift+I** - Manual skip intro/credits
-- **Customizable hotkeys** in options paged
+- **Customizable hotkeys** in options page
 
 ### 📊 **Advanced Analytics**
 

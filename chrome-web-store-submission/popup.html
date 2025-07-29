@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hotstar Extended</title>
+  <script type="module" crossorigin src="/popup.js"></script>
+  <link rel="modulepreload" crossorigin href="/modulepreload-polyfill.js">
+  <link rel="stylesheet" crossorigin href="/popup.css">
+</head>
+<body>
+  <div class="popup-container">
+    <div class="header">
+      <div class="logo">
+        <span class="logo-icon">⚡</span>
+        <h1>Streaming Extended</h1>
+      </div>
+      <div class="version">v2.0.0</div>
+    </div>
+    
+    <div class="content">
+      <div class="section master-toggle">
+        <div class="setting-item">
+          <div class="setting-info">
+            <label for="extensionEnabled">Extension Enabled</label>
+            <span class="setting-description">Turn the extension on/off</span>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" id="extensionEnabled" checked>
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Auto-Skip Settings</h2>
+        
+        <div class="setting-item">
+          <div class="setting-info">
+            <label for="autoSkipIntro">Skip Intros</label>
+            <span class="setting-description">Automatically skip episode intros</span>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" id="autoSkipIntro">
+            <span class="slider"></span>
+          </label>
+        </div>
+        
+        <div class="setting-item">
+          <div class="setting-info">
+            <label for="autoSkipCredits">Skip Credits</label>
+            <span class="setting-description">Automatically skip end credits</span>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" id="autoSkipCredits">
+            <span class="slider"></span>
+          </label>
+        </div>
+        
+        <div class="setting-item">
+          <div class="setting-info">
+            <label for="autoSkipRecap">Skip Recaps</label>
+            <span class="setting-description">Automatically skip episode recaps</span>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" id="autoSkipRecap">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-info">
+            <label for="autoNextEpisode">Auto Next Episode</label>
+            <span class="setting-description">Automatically go to next episode</span>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" id="autoNextEpisode">
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+      
+      <div class="section">
+        <h2>Statistics</h2>
+        
+        <div class="stats-grid">
+          <div class="stat-item">
+            <div class="stat-value" id="totalSkips">0</div>
+            <div class="stat-label">Total Skips</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value" id="timeSaved">0m</div>
+            <div class="stat-label">Time Saved</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value" id="thisWeekSkips">0</div>
+            <div class="stat-label">This Week</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value" id="nextEpisodeClicks">0</div>
+            <div class="stat-label">Next Episodes</div>
+          </div>
+        </div>
+        
+        <div class="top-shows" id="topShows">
+          <h3>Most Watched Shows</h3>
+          <div class="shows-list" id="showsList">
+            <div class="no-data">No data yet</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Advanced Settings</h2>
+        
+        <div class="setting-item">
+          <div class="setting-info">
+            <label for="skipDelay">Skip Delay</label>
+            <span class="setting-description">Delay before auto-skipping (ms)</span>
+          </div>
+          <select id="skipDelay" class="select">
+            <option value="500">0.5s</option>
+            <option value="1000">1s</option>
+            <option value="2000">2s</option>
+            <option value="3000">3s</option>
+          </select>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-info">
+            <label for="nextEpisodeDelay">Next Episode Delay</label>
+            <span class="setting-description">Delay before auto next episode</span>
+          </div>
+          <select id="nextEpisodeDelay" class="select">
+            <option value="0">Instant</option>
+            <option value="1000">1s</option>
+            <option value="3000">3s</option>
+            <option value="5000">5s</option>
+          </select>
+        </div>
+        
+        <div class="setting-item">
+          <div class="setting-info">
+            <label for="showNotifications">Show Notifications</label>
+            <span class="setting-description">Display skip notifications</span>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" id="showNotifications">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="setting-item">
+          <div class="setting-info">
+            <label for="showIMDBRatings">Show IMDB Ratings</label>
+            <span class="setting-description">Display IMDB ratings overlay</span>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" id="showIMDBRatings" checked>
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+    </div>
+    
+    <div class="footer">
+      <button id="openOptions" class="button secondary">
+        Advanced Options
+      </button>
+      <div class="status" id="status">
+        <span class="status-dot"></span>
+        <span class="status-text">Extension Active</span>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

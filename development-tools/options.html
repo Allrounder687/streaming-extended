@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hotstar Extended - Options</title>
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <div class="logo">
+        <span class="logo-icon">⚡</span>
+        <h1>Streaming Extended</h1>
+      </div>
+      <div class="subtitle">Advanced Settings & Configuration</div>
+    </header>
+
+    <main class="main">
+      <section class="section">
+        <h2>Auto-Skip Settings</h2>
+        <div class="setting-grid">
+          <div class="setting-card">
+            <div class="setting-header">
+              <h3>Skip Intros</h3>
+              <label class="toggle">
+                <input type="checkbox" id="autoSkipIntro">
+                <span class="slider"></span>
+              </label>
+            </div>
+            <p class="setting-description">
+              Automatically skip episode intros when the skip button appears
+            </p>
+          </div>
+
+          <div class="setting-card">
+            <div class="setting-header">
+              <h3>Skip Credits</h3>
+              <label class="toggle">
+                <input type="checkbox" id="autoSkipCredits">
+                <span class="slider"></span>
+              </label>
+            </div>
+            <p class="setting-description">
+              Automatically skip end credits to go to the next episode
+            </p>
+          </div>
+
+          <div class="setting-card">
+            <div class="setting-header">
+              <h3>Skip Recaps</h3>
+              <label class="toggle">
+                <input type="checkbox" id="autoSkipRecap">
+                <span class="slider"></span>
+              </label>
+            </div>
+            <p class="setting-description">
+              Automatically skip episode recaps and "previously on" segments
+            </p>
+          </div>
+
+          <div class="setting-card">
+            <div class="setting-header">
+              <h3>Auto Next Episode</h3>
+              <label class="toggle">
+                <input type="checkbox" id="autoNextEpisode">
+                <span class="slider"></span>
+              </label>
+            </div>
+            <p class="setting-description">
+              Automatically switch to the next episode when current episode ends
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>Timing & Behavior</h2>
+        <div class="setting-grid">
+          <div class="setting-card">
+            <div class="setting-header">
+              <h3>Skip Delay</h3>
+              <select id="skipDelay" class="select">
+                <option value="0">Instant</option>
+                <option value="500">0.5 seconds</option>
+                <option value="1000">1 second</option>
+                <option value="2000">2 seconds</option>
+                <option value="3000">3 seconds</option>
+                <option value="5000">5 seconds</option>
+              </select>
+            </div>
+            <p class="setting-description">
+              Delay before automatically clicking skip buttons
+            </p>
+          </div>
+
+          <div class="setting-card">
+            <div class="setting-header">
+              <h3>Next Episode Delay</h3>
+              <select id="nextEpisodeDelay" class="select">
+                <option value="0">Instant</option>
+                <option value="1000">1 second</option>
+                <option value="3000">3 seconds</option>
+                <option value="5000">5 seconds</option>
+                <option value="10000">10 seconds</option>
+              </select>
+            </div>
+            <p class="setting-description">
+              Delay before automatically going to next episode
+            </p>
+          </div>
+
+          <div class="setting-card">
+            <div class="setting-header">
+              <h3>Show Notifications</h3>
+              <label class="toggle">
+                <input type="checkbox" id="showNotifications">
+                <span class="slider"></span>
+              </label>
+            </div>
+            <p class="setting-description">
+              Display desktop notifications when content is skipped
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>Keyboard Shortcuts</h2>
+        <div class="setting-grid">
+          <div class="setting-card">
+            <div class="setting-header">
+              <h3>Toggle Extension</h3>
+              <input type="text" id="shortcutToggle" class="shortcut-input" placeholder="ctrl+shift+s">
+            </div>
+            <p class="setting-description">
+              Quickly enable/disable the extension
+            </p>
+          </div>
+
+          <div class="setting-card">
+            <div class="setting-header">
+              <h3>Force Next Episode</h3>
+              <input type="text" id="shortcutNext" class="shortcut-input" placeholder="ctrl+shift+n">
+            </div>
+            <p class="setting-description">
+              Manually trigger next episode
+            </p>
+          </div>
+
+          <div class="setting-card">
+            <div class="setting-header">
+              <h3>Manual Skip</h3>
+              <input type="text" id="shortcutSkip" class="shortcut-input" placeholder="ctrl+shift+i">
+            </div>
+            <p class="setting-description">
+              Manually skip intro/credits
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>Content Enhancement</h2>
+        <div class="setting-grid">
+          <div class="setting-card">
+            <div class="setting-header">
+              <h3>IMDB Ratings</h3>
+              <label class="toggle">
+                <input type="checkbox" id="showIMDBRatings">
+                <span class="slider"></span>
+              </label>
+            </div>
+            <p class="setting-description">
+              Display IMDB, Rotten Tomatoes, and Metacritic ratings overlay while watching content
+            </p>
+            <div class="setting-details">
+              <small>Ratings are fetched from OMDB API and cached for better performance</small>
+            </div>
+          </div>
+
+          <div class="setting-card">
+            <div class="setting-header">
+              <h3>Ratings Position</h3>
+              <select id="ratingsPosition" class="select">
+                <option value="top-right">Top Right</option>
+                <option value="top-left">Top Left</option>
+                <option value="bottom-right">Bottom Right</option>
+                <option value="bottom-left">Bottom Left</option>
+              </select>
+            </div>
+            <p class="setting-description">
+              Choose where to display the ratings overlay on the screen
+            </p>
+          </div>
+
+          <div class="setting-card">
+            <div class="setting-header">
+              <h3>Auto-hide Ratings</h3>
+              <select id="ratingsAutoHide" class="select">
+                <option value="never">Never</option>
+                <option value="5000">After 5 seconds</option>
+                <option value="10000">After 10 seconds</option>
+                <option value="15000">After 15 seconds</option>
+              </select>
+            </div>
+            <p class="setting-description">
+              Automatically fade out ratings after the specified time
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>About</h2>
+        <div class="about-card">
+          <div class="about-content">
+            <h3>Streaming Extended v2.0.0</h3>
+            <p>
+              Automatically skip intros, credits, and recaps across multiple streaming platforms for a seamless viewing experience.
+              Works on Netflix, Hotstar, Prime Video, Disney+, Hulu, and Max by detecting skip buttons and automatically clicking them.
+            </p>
+            <div class="features">
+              <h4>Features:</h4>
+              <ul>
+                <li>Multi-platform support (Netflix, Hotstar, Prime Video, Disney+, Hulu, Max)</li>
+                <li>Smart platform-specific button detection</li>
+                <li>Keyboard shortcuts with customizable hotkeys</li>
+                <li>Comprehensive usage statistics and analytics</li>
+                <li>Configurable skip delays and timing</li>
+                <li>Auto switch to next episode</li>
+                <li>Visual notifications and feedback</li>
+                <li>Show tracking and viewing insights</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="status" id="status">
+        <span class="status-dot"></span>
+        <span class="status-text">Extension Active</span>
+      </div>
+      <button id="resetSettings" class="button danger">Reset to Defaults</button>
+    </footer>
+  </div>
+
+  <script type="module" src="options.js"></script>
+</body>
+</html>

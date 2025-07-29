@@ -1,0 +1,55 @@
+Transform your streaming experience across ALL major platforms with intelligent auto-skip and IMDB ratings!
+
+Streaming Extended automatically detects and skips intros, credits, and recaps on Netflix, Hotstar, Prime Video, Disney+, Hulu, and Max while showing instant IMDB ratings for every movie and show. Perfect for binge-watchers who want seamless, uninterrupted streaming across all their favorite services.
+
+🚀 SMART AUTO-SKIP FEATURES
+• Automatically skip intros, credits, and recaps
+• Works seamlessly on Netflix, Hotstar, Prime Video, Disney+, Hulu & Max
+• Intelligent detection works on all content types across platforms
+• Customizable skip delays (0-5 seconds)
+• Save 2-5 minutes per episode during binge sessions
+
+⭐ IMDB RATINGS INTEGRATION
+• Instant IMDB ratings for content across all supported platforms
+• Beautiful overlay that doesn't interfere with viewing
+• Make informed viewing choices without leaving any streaming service
+• Toggle on/off based on your preferences
+• Works consistently across Netflix, Disney+, Prime Video & more
+
+🎯 ENHANCED STREAMING EXPERIENCE
+• Modern popup interface with session statistics
+• Track intros skipped and time saved
+• Optional desktop notifications for skip actions
+• Clean, intuitive design that stays out of your way
+
+🔒 PRIVACY & PERFORMANCE
+• Zero data collection - everything stays local
+• Minimal permissions for maximum security
+• Lightweight design won't slow down your browser
+• Works exclusively on supported streaming platforms
+• Secure access to Netflix, Disney+, Prime Video, Hotstar, Hulu & Max
+
+✨ EASY TO USE
+1. Install extension (one click)
+2. Visit any supported streaming platform
+3. Extension activates automatically on Netflix, Disney+, Prime Video, etc.
+4. Customize settings for each platform if desired
+5. Enjoy uninterrupted streaming across all your services!
+
+Perfect for multi-platform streamers, binge-watchers, busy viewers, and anyone who wants to focus on content instead of repetitive intros and credits. Join thousands of users already enjoying seamless streaming across Netflix, Disney+, Prime Video, Hotstar, Hulu, and Max.
+
+🆕 LATEST VERSION 2.1.0
+• New IMDB ratings integration with beautiful overlay
+• Enhanced skip button detection accuracy
+• Improved modern interface with dark theme
+• Better performance and reduced memory usage
+• Real-time session statistics tracking
+
+🌐 UNIVERSAL COMPATIBILITY
+Compatible with Chrome 88+, Microsoft Edge 88+, and all Chromium-based browsers. Works on Windows, macOS, and Linux.
+
+Supported Platforms: Netflix • Hotstar • Prime Video • Disney+ • Hulu • Max
+
+No subscriptions. No ads. No data collection. Just better streaming everywhere.
+
+Ready to transform your streaming experience across all platforms? Install now and discover what seamless, universal streaming feels like!

@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotstar Extended - Popup Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            width: 350px;
+            min-height: 500px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 0;
+            margin: 0;
+        }
+
+        .popup-container {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            background: linear-gradient(45deg, #00d4ff, #00ff88);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .version {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .status {
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(0, 255, 136, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #00ff88;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .status-text {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .features {
+            padding: 20px;
+            flex: 1;
+        }
+
+        .feature-group {
+            margin-bottom: 25px;
+        }
+
+        .feature-group h3 {
+            font-size: 16px;
+            margin-bottom: 15px;
+            color: #00d4ff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .feature-item:last-child {
+            border-bottom: none;
+        }
+
+        .feature-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+        }
+
+        .feature-icon {
+            font-size: 16px;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 44px;
+            height: 24px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .toggle-switch.active {
+            background: #00ff88;
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+        }
+
+        .toggle-switch.active::after {
+            transform: translateX(20px);
+        }
+
+        .stats {
+            padding: 15px 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .stats h3 {
+            font-size: 14px;
+            margin-bottom: 10px;
+            color: #00d4ff;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+
+        .stat-value {
+            font-weight: bold;
+            color: #00ff88;
+        }
+
+        .actions {
+            padding: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #00d4ff, #0099cc);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 212, 255, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .delay-selector {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+        }
+
+        .delay-input {
+            width: 60px;
+            padding: 4px 8px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 12px;
+        }
+
+        .notification-demo {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #00ff88;
+            max-width: 300px;
+            animation: slideIn 0.5s ease-out;
+            z-index: 1000;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .notification-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .notification-text {
+            font-size: 13px;
+            color: #ccc;
+        }
+    </style>
+</head>
+<body>
+    <div class="popup-container">
+        <div class="header">
+            <div class="logo">Hotstar Extended</div>
+            <div class="version">v2.1.0</div>
+        </div>
+
+        <div class="status">
+            <div class="status-indicator"></div>
+            <div class="status-text">Active on Hotstar</div>
+        </div>
+
+        <div class="features">
+            <div class="feature-group">
+                <h3>⚡ Auto-Skip Features</h3>
+                <div class="feature-item">
+                    <div class="feature-label">
+                        <span class="feature-icon">⏭️</span>
+                        <span>Skip Intros</span>
+                    </div>
+                    <div class="toggle-switch active" onclick="toggleFeature(this)"></div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-label">
+                        <span class="feature-icon">🎬</span>
+                        <span>Skip Credits</span>
+                    </div>
+                    <div class="toggle-switch active" onclick="toggleFeature(this)"></div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-label">
+                        <span class="feature-icon">📺</span>
+                        <span>Skip Recaps</span>
+                    </div>
+                    <div class="toggle-switch active" onclick="toggleFeature(this)"></div>
+                </div>
+            </div>
+
+            <div class="feature-group">
+                <h3>🎯 Smart Features</h3>
+                <div class="feature-item">
+                    <div class="feature-label">
+                        <span class="feature-icon">⭐</span>
+                        <span>IMDB Ratings</span>
+                    </div>
+                    <div class="toggle-switch active" onclick="toggleFeature(this)"></div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-label">
+                        <span class="feature-icon">🔔</span>
+                        <span>Notifications</span>
+                    </div>
+                    <div class="toggle-switch" onclick="toggleFeature(this)"></div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-label">
+                        <span class="feature-icon">⏱️</span>
+                        <span>Skip Delay</span>
+                    </div>
+                    <div class="delay-selector">
+                        <input type="number" class="delay-input" value="2" min="0" max="5">
+                        <span>sec</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats">
+            <h3>📊 Session Stats</h3>
+            <div class="stat-item">
+                <span>Intros Skipped:</span>
+                <span class="stat-value">12</span>
+            </div>
+            <div class="stat-item">
+                <span>Credits Skipped:</span>
+                <span class="stat-value">8</span>
+            </div>
+            <div class="stat-item">
+                <span>Time Saved:</span>
+                <span class="stat-value">4m 32s</span>
+            </div>
+        </div>
+
+        <div class="actions">
+            <button class="btn btn-secondary" onclick="openOptions()">Settings</button>
+            <button class="btn btn-primary" onclick="showNotification()">Test</button>
+        </div>
+    </div>
+
+    <script>
+        function toggleFeature(element) {
+            element.classList.toggle('active');
+        }
+
+        function openOptions() {
+            // Simulate opening options
+            alert('Opening advanced settings...');
+        }
+
+        function showNotification() {
+            // Create notification demo
+            const notification = document.createElement('div');
+            notification.className = 'notification-demo';
+            notification.innerHTML = `
+                <div class="notification-title">Hotstar Extended</div>
+                <div class="notification-text">Skipped intro - saved 30 seconds!</div>
+            `;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        // Auto-show notification demo after 2 seconds
+        setTimeout(showNotification, 2000);
+    </script>
+</body>
+</html>

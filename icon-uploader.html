@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chrome Extension Icon Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .upload-area {
+            border: 3px dashed #667eea;
+            border-radius: 15px;
+            padding: 60px 20px;
+            text-align: center;
+            background: #f8f9ff;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .upload-area:hover {
+            border-color: #764ba2;
+            background: #f0f2ff;
+            transform: translateY(-2px);
+        }
+
+        .upload-area.dragover {
+            border-color: #28a745;
+            background: #f0fff4;
+            transform: scale(1.02);
+        }
+
+        .upload-icon {
+            font-size: 4em;
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+
+        .upload-text {
+            font-size: 1.3em;
+            color: #495057;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .upload-subtext {
+            color: #6c757d;
+            font-size: 0.95em;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        .preview-section {
+            display: none;
+            margin-top: 30px;
+        }
+
+        .original-preview {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 15px;
+        }
+
+        .original-preview h3 {
+            color: #495057;
+            margin-bottom: 20px;
+            font-size: 1.4em;
+        }
+
+        .original-image {
+            max-width: 300px;
+            max-height: 300px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border: 3px solid white;
+        }
+
+        .image-info {
+            margin-top: 15px;
+            color: #6c757d;
+            font-size: 0.9em;
+        }
+
+        .generated-icons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .icon-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+
+        .icon-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            border-color: #667eea;
+        }
+
+        .icon-card h4 {
+            color: #495057;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+            font-weight: 600;
+        }
+
+        .icon-canvas {
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            margin: 15px auto;
+            display: block;
+            background: #f8f9fa;
+        }
+
+        .download-btn {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 0.95em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+            min-width: 150px;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(40, 167, 69, 0.3);
+        }
+
+        .download-btn:active {
+            transform: translateY(0);
+        }
+
+        .download-all-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: 600;
+            margin: 30px auto;
+            display: block;
+            transition: all 0.3s ease;
+            min-width: 200px;
+        }
+
+        .download-all-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .settings-panel {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border: 2px solid #e9ecef;
+        }
+
+        .settings-panel h3 {
+            color: #495057;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+        }
+
+        .setting-group {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .setting-group label {
+            font-weight: 600;
+            color: #495057;
+            min-width: 120px;
+        }
+
+        .setting-group input, .setting-group select {
+            padding: 8px 12px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 0.95em;
+        }
+
+        .setting-group input:focus, .setting-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .quality-indicator {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        .quality-high {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .quality-medium {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .quality-low {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .instructions {
+            background: linear-gradient(135deg, #e3f2fd, #f3e5f5);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border-left: 5px solid #667eea;
+        }
+
+        .instructions h3 {
+            color: #495057;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .instructions ol {
+            color: #495057;
+            padding-left: 20px;
+        }
+
+        .instructions li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #e9ecef;
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 20px 0;
+            display: none;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 1px solid #f5c6cb;
+            display: none;
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 1px solid #c3e6cb;
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                padding: 20px;
+            }
+            
+            .generated-icons {
+                grid-template-columns: 1fr;
+            }
+            
+            .setting-group {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .setting-group label {
+                min-width: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎨 Chrome Extension Icon Generator</h1>
+            <p>Upload any image and generate perfect 16px, 48px, and 128px icons for your Chrome extension</p>
+        </div>
+
+        <div class="content">
+            <div class="instructions">
+                <h3>📋 How to Use</h3>
+                <ol>
+                    <li><strong>Upload your image:</strong> Drag & drop or click to select any image file (PNG, JPG, SVG, etc.)</li>
+                    <li><strong>Adjust settings:</strong> Configure quality, background, and optimization options</li>
+                    <li><strong>Generate icons:</strong> Automatically creates 16px, 48px, and 128px versions</li>
+                    <li><strong>Download:</strong> Get individual files or download all as a ZIP</li>
+                    <li><strong>Use in extension:</strong> Replace your existing icon files and rebuild</li>
+                </ol>
+            </div>
+
+            <div class="upload-area" id="uploadArea">
+                <div class="upload-icon">📁</div>
+                <div class="upload-text">Drop your image here or click to browse</div>
+                <div class="upload-subtext">Supports PNG, JPG, SVG, WebP, and more • Recommended: 512px or larger</div>
+                <input type="file" id="fileInput" accept="image/*">
+            </div>
+
+            <div class="error-message" id="errorMessage"></div>
+            <div class="success-message" id="successMessage"></div>
+            <div class="progress-bar" id="progressBar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+
+            <div class="preview-section" id="previewSection">
+                <div class="original-preview">
+                    <h3>📷 Original Image</h3>
+                    <img id="originalImage" class="original-image" alt="Original">
+                    <div class="image-info" id="imageInfo"></div>
+                </div>
+
+                <div class="settings-panel">
+                    <h3>⚙️ Generation Settings</h3>
+                    <div class="setting-group">
+                        <label>Quality:</label>
+                        <select id="qualitySelect">
+                            <option value="1.0">High (1.0)</option>
+                            <option value="0.9" selected>Very Good (0.9)</option>
+                            <option value="0.8">Good (0.8)</option>
+                            <option value="0.7">Medium (0.7)</option>
+                        </select>
+                        <span class="quality-indicator quality-high" id="qualityIndicator">Recommended</span>
+                    </div>
+                    <div class="setting-group">
+                        <label>Background:</label>
+                        <select id="backgroundSelect">
+                            <option value="transparent">Transparent</option>
+                            <option value="white">White</option>
+                            <option value="black">Black</option>
+                            <option value="custom">Custom Color</option>
+                        </select>
+                        <input type="color" id="customColor" value="#ffffff" style="display: none;">
+                    </div>
+                    <div class="setting-group">
+                        <label>Smoothing:</label>
+                        <select id="smoothingSelect">
+                            <option value="true" selected>Enabled (Recommended)</option>
+                            <option value="false">Disabled</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="generated-icons" id="generatedIcons">
+                    <div class="icon-card">
+                        <h4>16×16 px</h4>
+                        <div style="font-size: 0.9em; color: #6c757d; margin-bottom: 10px;">Toolbar Icon</div>
+                        <canvas id="canvas16" class="icon-canvas" width="16" height="16"></canvas>
+                        <button class="download-btn" onclick="downloadIcon(16)">Download icon16.png</button>
+                    </div>
+
+                    <div class="icon-card">
+                        <h4>48×48 px</h4>
+                        <div style="font-size: 0.9em; color: #6c757d; margin-bottom: 10px;">Extension Management</div>
+                        <canvas id="canvas48" class="icon-canvas" width="48" height="48"></canvas>
+                        <button class="download-btn" onclick="downloadIcon(48)">Download icon48.png</button>
+                    </div>
+
+                    <div class="icon-card">
+                        <h4>128×128 px</h4>
+                        <div style="font-size: 0.9em; color: #6c757d; margin-bottom: 10px;">Chrome Web Store</div>
+                        <canvas id="canvas128" class="icon-canvas" width="128" height="128"></canvas>
+                        <button class="download-btn" onclick="downloadIcon(128)">Download icon128.png</button>
+                    </div>
+                </div>
+
+                <button class="download-all-btn" onclick="downloadAllIcons()">📦 Download All Icons as ZIP</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Include JSZip for creating ZIP files -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    
+    <script>
+        let originalImage = null;
+        let generatedCanvases = {};
+
+        // DOM elements
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const previewSection = document.getElementById('previewSection');
+        const originalImageEl = document.getElementById('originalImage');
+        const imageInfo = document.getElementById('imageInfo');
+        const errorMessage = document.getElementById('errorMessage');
+        const successMessage = document.getElementById('successMessage');
+        const progressBar = document.getElementById('progressBar');
+        const progressFill = document.getElementById('progressFill');
+
+        // Settings elements
+        const qualitySelect = document.getElementById('qualitySelect');
+        const backgroundSelect = document.getElementById('backgroundSelect');
+        const customColor = document.getElementById('customColor');
+        const smoothingSelect = document.getElementById('smoothingSelect');
+        const qualityIndicator = document.getElementById('qualityIndicator');
+
+        // Event listeners
+        uploadArea.addEventListener('click', () => fileInput.click());
+        uploadArea.addEventListener('dragover', handleDragOver);
+        uploadArea.addEventListener('dragleave', handleDragLeave);
+        uploadArea.addEventListener('drop', handleDrop);
+        fileInput.addEventListener('change', handleFileSelect);
+
+        // Settings event listeners
+        qualitySelect.addEventListener('change', updateQualityIndicator);
+        backgroundSelect.addEventListener('change', handleBackgroundChange);
+        [qualitySelect, backgroundSelect, customColor, smoothingSelect].forEach(el => {
+            el.addEventListener('change', regenerateIcons);
+        });
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        }
+
+        function handleDragLeave(e) {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                processFile(files[0]);
+            }
+        }
+
+        function handleFileSelect(e) {
+            const file = e.target.files[0];
+            if (file) {
+                processFile(file);
+            }
+        }
+
+        function processFile(file) {
+            // Validate file type
+            if (!file.type.startsWith('image/')) {
+                showError('Please select a valid image file.');
+                return;
+            }
+
+            // Validate file size (max 10MB)
+            if (file.size > 10 * 1024 * 1024) {
+                showError('File size too large. Please select an image under 10MB.');
+                return;
+            }
+
+            showProgress(0);
+            hideMessages();
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    originalImage = img;
+                    displayOriginalImage(img, file);
+                    generateAllIcons();
+                    showSuccess('Icons generated successfully!');
+                    hideProgress();
+                };
+                img.onerror = function() {
+                    showError('Failed to load image. Please try a different file.');
+                    hideProgress();
+                };
+                img.src = e.target.result;
+            };
+            reader.onerror = function() {
+                showError('Failed to read file. Please try again.');
+                hideProgress();
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function displayOriginalImage(img, file) {
+            originalImageEl.src = img.src;
+            imageInfo.innerHTML = `
+                <strong>Dimensions:</strong> ${img.width} × ${img.height} px<br>
+                <strong>File Size:</strong> ${formatFileSize(file.size)}<br>
+                <strong>File Type:</strong> ${file.type}
+            `;
+            previewSection.style.display = 'block';
+        }
+
+        function generateAllIcons() {
+            showProgress(20);
+            
+            const sizes = [16, 48, 128];
+            const promises = sizes.map((size, index) => {
+                return new Promise((resolve) => {
+                    setTimeout(() => {
+                        generateIcon(size);
+                        showProgress(20 + (index + 1) * 25);
+                        resolve();
+                    }, index * 100);
+                });
+            });
+
+            Promise.all(promises).then(() => {
+                showProgress(100);
+                setTimeout(hideProgress, 500);
+            });
+        }
+
+        function generateIcon(size) {
+            const canvas = document.getElementById(`canvas${size}`);
+            const ctx = canvas.getContext('2d');
+            
+            // Apply settings
+            const quality = parseFloat(qualitySelect.value);
+            const smoothing = smoothingSelect.value === 'true';
+            
+            // Set canvas properties
+            ctx.imageSmoothingEnabled = smoothing;
+            ctx.imageSmoothingQuality = 'high';
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, size, size);
+            
+            // Apply background
+            applyBackground(ctx, size);
+            
+            // Calculate dimensions to maintain aspect ratio
+            const { drawWidth, drawHeight, offsetX, offsetY } = calculateDimensions(originalImage, size);
+            
+            // Draw the image
+            ctx.drawImage(originalImage, offsetX, offsetY, drawWidth, drawHeight);
+            
+            // Store canvas reference
+            generatedCanvases[size] = canvas;
+        }
+
+        function applyBackground(ctx, size) {
+            const background = backgroundSelect.value;
+            
+            if (background === 'transparent') {
+                // Do nothing - transparent background
+                return;
+            }
+            
+            let fillColor;
+            switch (background) {
+                case 'white':
+                    fillColor = '#ffffff';
+                    break;
+                case 'black':
+                    fillColor = '#000000';
+                    break;
+                case 'custom':
+                    fillColor = customColor.value;
+                    break;
+                default:
+                    return;
+            }
+            
+            ctx.fillStyle = fillColor;
+            ctx.fillRect(0, 0, size, size);
+        }
+
+        function calculateDimensions(img, targetSize) {
+            const aspectRatio = img.width / img.height;
+            let drawWidth, drawHeight, offsetX = 0, offsetY = 0;
+            
+            if (aspectRatio > 1) {
+                // Landscape
+                drawWidth = targetSize;
+                drawHeight = targetSize / aspectRatio;
+                offsetY = (targetSize - drawHeight) / 2;
+            } else {
+                // Portrait or square
+                drawHeight = targetSize;
+                drawWidth = targetSize * aspectRatio;
+                offsetX = (targetSize - drawWidth) / 2;
+            }
+            
+            return { drawWidth, drawHeight, offsetX, offsetY };
+        }
+
+        function regenerateIcons() {
+            if (originalImage) {
+                generateAllIcons();
+            }
+        }
+
+        function downloadIcon(size) {
+            const canvas = generatedCanvases[size];
+            if (!canvas) return;
+            
+            const quality = parseFloat(qualitySelect.value);
+            const link = document.createElement('a');
+            link.download = `icon${size}.png`;
+            link.href = canvas.toDataURL('image/png', quality);
+            link.click();
+        }
+
+        async function downloadAllIcons() {
+            if (!window.JSZip) {
+                showError('ZIP library not loaded. Please refresh the page and try again.');
+                return;
+            }
+
+            const zip = new JSZip();
+            const quality = parseFloat(qualitySelect.value);
+            
+            showProgress(0);
+            
+            // Add each icon to the ZIP
+            for (const size of [16, 48, 128]) {
+                const canvas = generatedCanvases[size];
+                if (canvas) {
+                    const dataUrl = canvas.toDataURL('image/png', quality);
+                    const base64Data = dataUrl.split(',')[1];
+                    zip.file(`icon${size}.png`, base64Data, { base64: true });
+                }
+                showProgress((size === 16 ? 33 : size === 48 ? 66 : 100));
+            }
+            
+            // Generate and download ZIP
+            try {
+                const content = await zip.generateAsync({ type: 'blob' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(content);
+                link.download = 'chrome-extension-icons.zip';
+                link.click();
+                
+                showSuccess('All icons downloaded as ZIP file!');
+            } catch (error) {
+                showError('Failed to create ZIP file. Please try downloading icons individually.');
+            }
+            
+            hideProgress();
+        }
+
+        function updateQualityIndicator() {
+            const quality = parseFloat(qualitySelect.value);
+            const indicator = qualityIndicator;
+            
+            if (quality >= 0.9) {
+                indicator.textContent = 'Excellent';
+                indicator.className = 'quality-indicator quality-high';
+            } else if (quality >= 0.8) {
+                indicator.textContent = 'Very Good';
+                indicator.className = 'quality-indicator quality-high';
+            } else if (quality >= 0.7) {
+                indicator.textContent = 'Good';
+                indicator.className = 'quality-indicator quality-medium';
+            } else {
+                indicator.textContent = 'Lower Quality';
+                indicator.className = 'quality-indicator quality-low';
+            }
+        }
+
+        function handleBackgroundChange() {
+            const isCustom = backgroundSelect.value === 'custom';
+            customColor.style.display = isCustom ? 'inline-block' : 'none';
+        }
+
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+            successMessage.style.display = 'none';
+        }
+
+        function showSuccess(message) {
+            successMessage.textContent = message;
+            successMessage.style.display = 'block';
+            errorMessage.style.display = 'none';
+        }
+
+        function hideMessages() {
+            errorMessage.style.display = 'none';
+            successMessage.style.display = 'none';
+        }
+
+        function showProgress(percent) {
+            progressBar.style.display = 'block';
+            progressFill.style.width = percent + '%';
+        }
+
+        function hideProgress() {
+            progressBar.style.display = 'none';
+            progressFill.style.width = '0%';
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // Initialize
+        updateQualityIndicator();
+        handleBackgroundChange();
+    </script>
+</body>
+</html>

@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IMDB Ratings Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #1a1a1a;
+            color: white;
+        }
+        .test-controls {
+            margin: 20px 0;
+            padding: 20px;
+            background: #2a2a2a;
+            border-radius: 8px;
+        }
+        button {
+            margin: 5px;
+            padding: 10px 15px;
+            background: #007acc;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #005a9e;
+        }
+        .mock-title {
+            font-size: 24px;
+            margin: 10px 0;
+            padding: 10px;
+            background: #333;
+            border-radius: 4px;
+        }
+        .platform-selector {
+            margin: 10px 0;
+        }
+        select {
+            padding: 5px;
+            margin: 0 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>IMDB Ratings Module Test</h1>
+    
+    <div class="test-controls">
+        <h3>Test Controls</h3>
+        
+        <div class="platform-selector">
+            <label>Simulate Platform:</label>
+            <select id="platformSelect">
+                <option value="netflix.com">Netflix</option>
+                <option value="hotstar.com">Hotstar</option>
+                <option value="primevideo.com">Prime Video</option>
+                <option value="disneyplus.com">Disney+</option>
+                <option value="hulu.com">Hulu</option>
+                <option value="max.com">Max</option>
+            </select>
+            <button onclick="changePlatform()">Change Platform</button>
+        </div>
+        
+        <div>
+            <button onclick="testInitialization()">Test Initialization</button>
+            <button onclick="testTitleExtraction()">Test Title Extraction</button>
+            <button onclick="testRatingsFetch()">Test Ratings Fetch</button>
+            <button onclick="testCleanup()">Test Cleanup</button>
+        </div>
+        
+        <div>
+            <button onclick="simulateTitle('Breaking Bad')">Simulate: Breaking Bad</button>
+            <button onclick="simulateTitle('The Office')">Simulate: The Office</button>
+            <button onclick="simulateTitle('Stranger Things')">Simulate: Stranger Things</button>
+            <button onclick="simulateTitle('Invalid Movie Title XYZ')">Simulate: Invalid Title</button>
+        </div>
+    </div>
+
+    <div class="mock-title" id="mockTitle">
+        Mock Title Element (will be used for testing)
+    </div>
+
+    <div id="testResults" style="margin-top: 20px; padding: 20px; background: #2a2a2a; border-radius: 8px;">
+        <h3>Test Results:</h3>
+        <div id="results"></div>
+    </div>
+
+    <!-- Mock Chrome API for testing -->
+    <script>
+        // Mock Chrome API for testing
+        window.chrome = {
+            runtime: {
+                getURL: (path) => `./${path}`,
+                id: 'test-extension-id'
+            },
+            storage: {
+                sync: {
+                    get: (keys, callback) => {
+                        // Mock storage response
+                        callback({});
+                    },
+                    set: (data) => {
+                        console.log('Mock storage set:', data);
+                    }
+                }
+            }
+        };
+
+        // Mock platform-specific title elements
+        function createMockTitleElements() {
+            // Clear existing mock elements
+            document.querySelectorAll('.mock-platform-title').forEach(el => el.remove());
+            
+            const platform = document.getElementById('platformSelect').value;
+            const mockTitle = document.getElementById('mockTitle');
+            
+            // Create platform-specific title elements
+            if (platform === 'netflix.com') {
+                const titleEl = document.createElement('h1');
+                titleEl.setAttribute('data-uia', 'video-title');
+                titleEl.className = 'mock-platform-title';
+                titleEl.textContent = mockTitle.textContent;
+                document.body.appendChild(titleEl);
+            } else if (platform === 'hotstar.com') {
+                const titleEl = document.createElement('div');
+                titleEl.className = 'player-title mock-platform-title';
+                titleEl.textContent = mockTitle.textContent;
+                document.body.appendChild(titleEl);
+            }
+            // Add more platform-specific elements as needed
+        }
+
+        function changePlatform() {
+            const platform = document.getElementById('platformSelect').value;
+            
+            // Update URL to simulate platform
+            history.replaceState({}, '', `https://${platform}/watch/test`);
+            
+            createMockTitleElements();
+            logResult(`Platform changed to: ${platform}`);
+        }
+
+        function logResult(message) {
+            const results = document.getElementById('results');
+            const timestamp = new Date().toLocaleTimeString();
+            results.innerHTML += `<div>[${timestamp}] ${message}</div>`;
+            results.scrollTop = results.scrollHeight;
+        }
+
+        async function testInitialization() {
+            try {
+                if (window.imdbRatingsInstance) {
+                    window.imdbRatingsInstance.cleanup();
+                }
+                
+                window.imdbRatingsInstance = new IMDBRatings({
+                    MAX_RETRIES: 1, // Reduce retries for testing
+                    API_TIMEOUT: 3000
+                });
+                
+                await window.imdbRatingsInstance.initialize();
+                logResult('✅ Initialization successful');
+            } catch (error) {
+                logResult(`❌ Initialization failed: ${error.message}`);
+            }
+        }
+
+        function testTitleExtraction() {
+            try {
+                if (!window.imdbRatingsInstance) {
+                    logResult('❌ Please initialize first');
+                    return;
+                }
+                
+                const title = window.imdbRatingsInstance.platformDetector.extractCurrentTitle();
+                logResult(`Title extracted: "${title || 'No title found'}"`);
+            } catch (error) {
+                logResult(`❌ Title extraction failed: ${error.message}`);
+            }
+        }
+
+        async function testRatingsFetch() {
+            try {
+                if (!window.imdbRatingsInstance) {
+                    logResult('❌ Please initialize first');
+                    return;
+                }
+                
+                const title = window.imdbRatingsInstance.platformDetector.extractCurrentTitle() || 'Breaking Bad';
+                logResult(`🔄 Fetching ratings for: "${title}"`);
+                
+                await window.imdbRatingsInstance.fetchAndDisplayRatings(title);
+                logResult('✅ Ratings fetch completed');
+            } catch (error) {
+                logResult(`❌ Ratings fetch failed: ${error.message}`);
+            }
+        }
+
+        function testCleanup() {
+            try {
+                if (window.imdbRatingsInstance) {
+                    window.imdbRatingsInstance.cleanup();
+                    logResult('✅ Cleanup completed');
+                } else {
+                    logResult('ℹ️ No instance to cleanup');
+                }
+            } catch (error) {
+                logResult(`❌ Cleanup failed: ${error.message}`);
+            }
+        }
+
+        function simulateTitle(title) {
+            document.getElementById('mockTitle').textContent = title;
+            createMockTitleElements();
+            logResult(`📺 Simulated title: "${title}"`);
+            
+            // Auto-test if instance exists
+            if (window.imdbRatingsInstance) {
+                setTimeout(() => testRatingsFetch(), 500);
+            }
+        }
+
+        // Initialize on load
+        window.addEventListener('load', () => {
+            changePlatform(); // Set up initial platform
+            logResult('🚀 Test page loaded. Click "Test Initialization" to begin.');
+        });
+    </script>
+
+    <!-- Load the IMDB Ratings module -->
+    <script src="imdb-ratings.js"></script>
+</body>
+</html>

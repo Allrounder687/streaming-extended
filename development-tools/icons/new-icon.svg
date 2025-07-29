@@ -1,0 +1,51 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Black background -->
+  <rect width="512" height="512" fill="#000000"/>
+  
+  <!-- Main play button with gradient -->
+  <defs>
+    <linearGradient id="mainGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00D4FF;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#8B5CF6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FF6B9D;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="playGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FF6B9D;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FF8A65;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Speed lines/motion blur effect -->
+  <g opacity="0.8">
+    <!-- Top speed lines -->
+    <rect x="140" y="120" width="80" height="12" rx="6" fill="url(#mainGradient)" opacity="0.6"/>
+    <rect x="160" y="140" width="120" height="16" rx="8" fill="url(#mainGradient)" opacity="0.7"/>
+    <rect x="180" y="160" width="140" height="20" rx="10" fill="url(#mainGradient)" opacity="0.8"/>
+    
+    <!-- Bottom speed lines -->
+    <rect x="120" y="320" width="100" height="16" rx="8" fill="url(#mainGradient)" opacity="0.6"/>
+    <rect x="140" y="340" width="140" height="20" rx="10" fill="url(#mainGradient)" opacity="0.7"/>
+    <rect x="160" y="360" width="160" height="24" rx="12" fill="url(#mainGradient)" opacity="0.8"/>
+  </g>
+  
+  <!-- Decorative dots -->
+  <circle cx="120" cy="100" r="8" fill="#00D4FF" opacity="0.8"/>
+  <circle cx="140" cy="80" r="12" fill="#00D4FF" opacity="0.9"/>
+  <circle cx="380" cy="120" r="6" fill="#8B5CF6" opacity="0.7"/>
+  <circle cx="400" cy="140" r="10" fill="#8B5CF6" opacity="0.8"/>
+  
+  <circle cx="100" cy="380" r="6" fill="#FF6B9D" opacity="0.7"/>
+  <circle cx="120" cy="400" r="10" fill="#FF6B9D" opacity="0.8"/>
+  <circle cx="380" cy="360" r="8" fill="#FF8A65" opacity="0.8"/>
+  <circle cx="400" cy="380" r="12" fill="#FF8A65" opacity="0.9"/>
+  
+  <!-- Main play button shape -->
+  <path d="M180 200 L180 312 L280 256 Z" fill="url(#playGradient)" stroke="none"/>
+  
+  <!-- Outer frame/border effect -->
+  <path d="M120 180 L120 332 L380 332 L380 180 Z" fill="none" stroke="url(#mainGradient)" stroke-width="4" rx="20" opacity="0.3"/>
+  
+  <!-- Text at bottom -->
+  <text x="256" y="450" font-family="Arial, sans-serif" font-size="24" font-weight="bold" text-anchor="middle" fill="white">STREAMING</text>
+  <text x="256" y="480" font-family="Arial, sans-serif" font-size="16" font-weight="normal" text-anchor="middle" fill="#CCCCCC">EXTENDED EXTENSION</text>
+</svg>

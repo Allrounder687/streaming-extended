@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Generate Icon</title>
+    <style>
+        canvas {
+            border: 1px solid #ccc;
+            margin: 10px;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        button {
+            margin: 10px;
+            padding: 8px 16px;
+            background-color: #1225A5;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Hotstar Extended Icon Generator</h2>
+        <div>
+            <canvas id="icon16" width="16" height="16"></canvas>
+            <canvas id="icon48" width="48" height="48"></canvas>
+            <canvas id="icon128" width="128" height="128"></canvas>
+        </div>
+        <button id="downloadBtn">Download Icons</button>
+        <p id="status">Click the button to download the icons</p>
+    </div>
+
+    <script>
+        function drawIcon(canvas, size) {
+            const ctx = canvas.getContext('2d');
+            
+            // Draw rounded rectangle background
+            ctx.fillStyle = '#1225A5';
+            const radius = size * 0.15;
+            ctx.beginPath();
+            ctx.moveTo(radius, 0);
+            ctx.lineTo(size - radius, 0);
+            ctx.quadraticCurveTo(size, 0, size, radius);
+            ctx.lineTo(size, size - radius);
+            ctx.quadraticCurveTo(size, size, size - radius, size);
+            ctx.lineTo(radius, size);
+            ctx.quadraticCurveTo(0, size, 0, size - radius);
+            ctx.lineTo(0, radius);
+            ctx.quadraticCurveTo(0, 0, radius, 0);
+            ctx.closePath();
+            ctx.fill();
+            
+            // Draw play triangle
+            ctx.fillStyle = '#FFFFFF';
+            const padding = size * 0.3;
+            ctx.beginPath();
+            ctx.moveTo(padding, padding);
+            ctx.lineTo(size - padding, size / 2);
+            ctx.lineTo(padding, size - padding);
+            ctx.closePath();
+            ctx.fill();
+            
+            // Draw skip-forward arrow
+            const arrowSize = size * 0.2;
+            ctx.beginPath();
+            ctx.moveTo(size - padding, size / 2 - arrowSize / 2);
+            ctx.lineTo(size - padding + arrowSize, size / 2);
+            ctx.lineTo(size - padding, size / 2 + arrowSize / 2);
+            ctx.lineTo(size - padding, size / 2 - arrowSize / 2);
+            ctx.closePath();
+            ctx.fill();
+            
+            return canvas.toDataURL('image/png');
+        }
+        
+        // Draw icons on page load
+        window.onload = function() {
+            const icon16 = document.getElementById('icon16');
+            const icon48 = document.getElementById('icon48');
+            const icon128 = document.getElementById('icon128');
+            
+            drawIcon(icon16, 16);
+            drawIcon(icon48, 48);
+            drawIcon(icon128, 128);
+            
+            // Set up download button
+            document.getElementById('downloadBtn').addEventListener('click', function() {
+                // Create zip file with all icons
+                const zip = new JSZip();
+                
+                // Add each icon to the zip
+                [16, 48, 128].forEach(size => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = size;
+                    canvas.height = size;
+                    const dataUrl = drawIcon(canvas, size);
+                    const base64 = dataUrl.split(',')[1];
+                    zip.file(`icon${size}.png`, base64, {base64: true});
+                });
+                
+                // Generate and download the zip
+                zip.generateAsync({type: 'blob'}).then(function(content) {
+                    const url = URL.createObjectURL(content);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'hotstar-extended-icons.zip';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                    document.getElementById('status').textContent = 'Icons downloaded successfully!';
+                });
+            });
+        };
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
+</body>
+</html>

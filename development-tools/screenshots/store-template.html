@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotstar Extended - Store Screenshot Template</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            overflow: hidden;
+        }
+
+        .store-template {
+            width: 1280px;
+            height: 800px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+        }
+
+        .content-area {
+            display: flex;
+            width: 90%;
+            height: 80%;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .left-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .right-section {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .hero-title {
+            font-size: 48px;
+            font-weight: bold;
+            line-height: 1.2;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #00d4ff, #00ff88);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 24px;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 30px;
+            line-height: 1.4;
+        }
+
+        .features-list {
+            list-style: none;
+            font-size: 18px;
+            line-height: 2;
+        }
+
+        .features-list li {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .feature-icon {
+            font-size: 24px;
+            width: 40px;
+            text-align: center;
+        }
+
+        .popup-mockup {
+            width: 350px;
+            height: 500px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .mockup-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .mockup-logo {
+            font-size: 20px;
+            font-weight: bold;
+            background: linear-gradient(45deg, #00d4ff, #00ff88);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .mockup-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: rgba(0, 255, 136, 0.1);
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #00ff88;
+            animation: pulse 2s infinite;
+        }
+
+        .mockup-features {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .mockup-feature {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 14px;
+        }
+
+        .mockup-toggle {
+            width: 32px;
+            height: 18px;
+            background: #00ff88;
+            border-radius: 9px;
+            position: relative;
+        }
+
+        .mockup-toggle::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            width: 14px;
+            height: 14px;
+            background: white;
+            border-radius: 50%;
+        }
+
+        .stats-section {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+        }
+
+        .stats-title {
+            font-size: 12px;
+            color: #00d4ff;
+            margin-bottom: 10px;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            color: #00ff88;
+            font-weight: bold;
+        }
+
+        .annotation {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            border-left: 3px solid #00ff88;
+            max-width: 200px;
+            z-index: 10;
+        }
+
+        .annotation::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 0;
+            border: 8px solid transparent;
+        }
+
+        .annotation.top::after {
+            bottom: -16px;
+            left: 20px;
+            border-top-color: rgba(0, 0, 0, 0.8);
+        }
+
+        .annotation.right::after {
+            left: -16px;
+            top: 50%;
+            transform: translateY(-50%);
+            border-right-color: rgba(0, 0, 0, 0.8);
+        }
+
+        .annotation.bottom::after {
+            top: -16px;
+            left: 20px;
+            border-bottom-color: rgba(0, 0, 0, 0.8);
+        }
+
+        .annotation.left::after {
+            right: -16px;
+            top: 50%;
+            transform: translateY(-50%);
+            border-left-color: rgba(0, 0, 0, 0.8);
+        }
+
+        /* Template variations */
+        .template-1 .annotation-1 {
+            top: 100px;
+            left: 50px;
+        }
+
+        .template-1 .annotation-2 {
+            top: 300px;
+            right: 100px;
+        }
+
+        .template-1 .annotation-3 {
+            bottom: 100px;
+            left: 100px;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .chrome-frame {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 40px;
+            background: #f1f3f4;
+            border-bottom: 1px solid #dadce0;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            gap: 8px;
+        }
+
+        .chrome-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .chrome-button {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .chrome-button.close { background: #ff5f57; }
+        .chrome-button.minimize { background: #ffbd2e; }
+        .chrome-button.maximize { background: #28ca42; }
+
+        .chrome-url {
+            flex: 1;
+            background: white;
+            border: 1px solid #dadce0;
+            border-radius: 20px;
+            padding: 6px 16px;
+            font-size: 14px;
+            color: #5f6368;
+            margin-left: 20px;
+        }
+
+        .extension-icon {
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(45deg, #00d4ff, #00ff88);
+            border-radius: 4px;
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="store-template template-1">
+        <!-- Chrome browser frame -->
+        <div class="chrome-frame">
+            <div class="chrome-buttons">
+                <div class="chrome-button close"></div>
+                <div class="chrome-button minimize"></div>
+                <div class="chrome-button maximize"></div>
+            </div>
+            <div class="chrome-url">hotstar.com/watch/movie/sample-content</div>
+            <div class="extension-icon">HE</div>
+        </div>
+
+        <div class="content-area">
+            <div class="left-section">
+                <div>
+                    <h1 class="hero-title">Hotstar Extended</h1>
+                    <p class="hero-subtitle">Skip intros, credits & recaps automatically</p>
+                </div>
+                
+                <ul class="features-list">
+                    <li>
+                        <span class="feature-icon">⚡</span>
+                        <span>Auto-skip intros, credits, and recaps</span>
+                    </li>
+                    <li>
+                        <span class="feature-icon">⭐</span>
+                        <span>IMDB ratings integration</span>
+                    </li>
+                    <li>
+                        <span class="feature-icon">🎯</span>
+                        <span>Smart button detection</span>
+                    </li>
+                    <li>
+                        <span class="feature-icon">⚙️</span>
+                        <span>Customizable skip delays</span>
+                    </li>
+                    <li>
+                        <span class="feature-icon">🔔</span>
+                        <span>Desktop notifications</span>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="right-section">
+                <div class="popup-mockup">
+                    <div class="mockup-header">
+                        <div class="mockup-logo">Hotstar Extended</div>
+                        <div style="font-size: 10px; color: rgba(255,255,255,0.7);">v2.1.0</div>
+                    </div>
+
+                    <div class="mockup-status">
+                        <div class="status-dot"></div>
+                        <span>Active on Hotstar</span>
+                    </div>
+
+                    <div class="mockup-features">
+                        <div class="mockup-feature">
+                            <span>⏭️ Skip Intros</span>
+                            <div class="mockup-toggle"></div>
+                        </div>
+                        <div class="mockup-feature">
+                            <span>🎬 Skip Credits</span>
+                            <div class="mockup-toggle"></div>
+                        </div>
+                        <div class="mockup-feature">
+                            <span>📺 Skip Recaps</span>
+                            <div class="mockup-toggle"></div>
+                        </div>
+                        <div class="mockup-feature">
+                            <span>⭐ IMDB Ratings</span>
+                            <div class="mockup-toggle"></div>
+                        </div>
+                    </div>
+
+                    <div class="stats-section">
+                        <div class="stats-title">📊 Session Stats</div>
+                        <div class="stat-item">
+                            <span>Intros Skipped:</span>
+                            <span class="stat-value">12</span>
+                        </div>
+                        <div class="stat-item">
+                            <span>Time Saved:</span>
+                            <span class="stat-value">4m 32s</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Annotations -->
+        <div class="annotation annotation-1 top">
+            One-click access to all features
+        </div>
+        <div class="annotation annotation-2 left">
+            Real-time statistics tracking
+        </div>
+        <div class="annotation annotation-3 bottom">
+            Seamless Hotstar integration
+        </div>
+    </div>
+
+    <script>
+        // Add some interactivity for demo
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animate the status dot
+            const statusDot = document.querySelector('.status-dot');
+            setInterval(() => {
+                statusDot.style.transform = statusDot.style.transform === 'scale(1.2)' ? 'scale(1)' : 'scale(1.2)';
+            }, 1000);
+
+            // Cycle through different templates
+            let templateIndex = 1;
+            setInterval(() => {
+                templateIndex = templateIndex === 3 ? 1 : templateIndex + 1;
+                document.querySelector('.store-template').className = `store-template template-${templateIndex}`;
+            }, 5000);
+        });
+    </script>
+</body>
+</html>

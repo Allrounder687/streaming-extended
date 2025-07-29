@@ -1,0 +1,28 @@
+/* Styles for Hotstar Extended content script */
+@keyframes hotstarExtendedFadeOut {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-5px) scale(1.05);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-15px) scale(0.95);
+  }
+}
+
+.hotstar-extended-skip-indicator {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  box-shadow: 0 4px 12px rgba(0, 212, 255, 0.3);
+  white-space: nowrap;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+}
+
+/* Ensure our indicator appears above everything */
+.hotstar-extended-skip-indicator {
+  z-index: 999999 !important;
+}
